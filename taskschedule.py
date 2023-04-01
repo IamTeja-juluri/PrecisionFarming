@@ -13,29 +13,29 @@ import os
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-options.add_experimental_option("prefs",{"download.default_directory":"C:\\Users\\Teja\\OneDrive\\Desktop\\Selenium Automation\\"})
+# options.add_experimental_option("prefs",{"download.default_directory":"C:\\Users\\Teja\\OneDrive\\Desktop\\Selenium Automation\\"})
 
-# user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
 
-# options.add_argument('--headless')
-# options.add_argument(f'user-agent={user_agent}')
-# options.add_argument("--window-size=1920,1080")
-# options.add_argument('--ignore-certificate-errors')
-# options.add_argument('--allow-running-insecure-content')
-# options.add_argument("--disable-extensions")
-# options.add_argument("--proxy-server='direct://'")
-# options.add_argument("--proxy-bypass-list=*")
-# options.add_argument("--start-maximized")
-# options.add_argument('--disable-gpu')
-# options.add_argument('--disable-dev-shm-usage')
-# options.add_argument('--no-sandbox')
+options.add_argument('--headless')
+options.add_argument(f'user-agent={user_agent}')
+options.add_argument("--window-size=1920,1080")
+options.add_argument('--ignore-certificate-errors')
+options.add_argument('--allow-running-insecure-content')
+options.add_argument("--disable-extensions")
+options.add_argument("--proxy-server='direct://'")
+options.add_argument("--proxy-bypass-list=*")
+options.add_argument("--start-maximized")
+options.add_argument('--disable-gpu')
+options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--no-sandbox')
 
 driver = webdriver.Chrome(options=options)
 
-# driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
 
-# params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': "C:\\Users\\Teja\\OneDrive\\Desktop\\Selenium Automation\\"}}
-# driver.execute("send_command", params)
+params = {'cmd': 'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': "C:\\Users\\Teja\\OneDrive\\Desktop\\Selenium Automation\\"}}
+driver.execute("send_command", params)
 
 username="cvr-heights-2022"
 password="Cvrece123"
@@ -144,7 +144,7 @@ def repeatTask():
 
     before = os.listdir('./') 
      
-    if(len(before)==6):
+    if(len(before)==7):
         os.remove(filename)
 
     #3dots
@@ -162,9 +162,9 @@ def repeatTask():
 
 
 
-def jobb():
+def job():
 
-    driver.maximize_window()
+    # driver.maximize_window()
 
     # Navigate to the URL of the website
     driver.get(url)
@@ -182,7 +182,7 @@ def jobb():
     
     #clicks console
     driver.find_element(By.XPATH,"//span[@class='wTOG3ofQ0S']").click()
-    time.sleep(10)
+    time.sleep(5)
 
     
     #clicks Application Server
@@ -208,10 +208,6 @@ def jobb():
     driver.quit() 
 
 
-
-
-
-
-jobb()
+job()
 
 

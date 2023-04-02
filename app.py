@@ -5,7 +5,8 @@ import pickle
 from sklearn.metrics import classification_report
 from sklearn import metrics
 from sklearn import tree
-from Data.fertilizerdic import fertilizer_dic
+from Data.fertilizerDicUi import fertilizer_dic_ui
+from Data.fertilizerDicMessage import fertilizer_dic_msg
 import schedule
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -46,7 +47,7 @@ driver.execute("send_command", params)
 username="cvr-heights-2022"
 password="Cvrece123"
 url="https://beta.thethingsmate.com/oauth/login"
-filename="Soil_NPK_sensor_-1_2023_03_26.csv"
+filename="Soil_NPK_sensor_-1_2023_04_02.csv"
 
 
 # Loading crop recommendation model
@@ -85,33 +86,27 @@ app = Flask(__name__)
 
 crops=["apple","banana","blackgram","chickpea","coconut","coffee","cotton","grapes","jute","kidneybeans","lentil","maize","mango","mothbeans","mungbean","muskmelon","orange","papaya","pigeonpeas","pomegranate","rice","watermelon"]
 
-
-crop=''
 notification_medium=''
-contact=''
 time_interval=''
 
+def sendMsg(Message,contact):
 
-def sendMsg(Message):
-
-      contactno=+917013206067
-      print("sent msg")
-    #   account_sid = "AC927097c6ffc585d6ffa4322bd090b52a"
-    #   auth_token = "dd68b13bce1d1348742f16932e8d46cc"
-    #   client = Client(account_sid,auth_token)
-    #   message=client.messages.create(body=Message,from_='+15673131213',to=contactno)
+      contactno='+91'+contact
+      print("sending msg")
+      account_sid = "AC927097c6ffc585d6ffa4322bd090b52a" 
+      auth_token = "ac338ef290f6b1ed53a3dacb79e55dc5"
+      client = Client(account_sid,auth_token)
+      message=client.messages.create(body=Message,from_='+15673131213',to=contactno)
      
-  
+  		
 
-
-def fertilizer_prediction_result(rows):
+def fertilizer_prediction_result(rows,crop_name):
         
         N=int(rows[0][1])
         P=int(rows[0][2])
         K=int(rows[0][3])
 
-        # crop='apple'
-
+        crop=str(crop_name)
 
         df=pd.read_csv('Data/fertilizer.csv')
         
@@ -143,11 +138,10 @@ def fertilizer_prediction_result(rows):
 
         print("fertilizer prediction method")
         
-        sendMsg(fertilizer_dic[key])      
+        return key
 
 
-
-def processCsvFile():
+def processCsvFile(crop_name):
 
      # initializing the titles and rows list
     fields = []
@@ -174,10 +168,9 @@ def processCsvFile():
 
     print(n,p,k)
 
-    fertilizer_prediction_result(rows)
-
     print("process csv method")
 
+    return fertilizer_prediction_result(rows,crop_name)
    
 
 def repeatTask():
@@ -188,7 +181,7 @@ def repeatTask():
 
     before = os.listdir('./') 
      
-    if(len(before)==7):
+    if(len(before)==9):
         os.remove(filename)
 
     #3dots
@@ -201,7 +194,6 @@ def repeatTask():
 
     print("repeat task method")
 
-    processCsvFile()
     
 
 def job():
@@ -255,38 +247,26 @@ def fertilizerPrediction():
 
     if request.method == 'POST':
        
-        crop=request.form['crops']
+        crop_name=request.form['crops']
         notification_medium=request.form['notification_medium']
         contact=request.form['contact']
         time_interval=request.form['crop_status']
 
-        print("crop=",type(crop))
+        print("crop=",type(crop_name))
         print("n_m="+notification_medium)
         print("contact="+contact)
-        print("ti="+time_interval)
+        print("time="+time_interval)
+        job()    
+        key=processCsvFile(crop_name)
+        sendMsg(fertilizer_dic_msg[key],contact)   
+        response = Markup(str(fertilizer_dic_ui[key]))  
 
-    job()    
-
-    return render_template('fertilizer.html',message="Hello")
-
-
-
-# @app.route('/home')
-# def home():
-#     return render_template('index.html')
-
-# @ app.route('/login')
-# def login():
-#     return render_template('login.html')
-
-# @ app.route('/signup')
-# def signup():
-#     return render_template('signup.html')
+    return render_template('fertilizer.html',message=response)
 
 
-# @ app.route('/crop-recommend')
-# def crop_recommend():
-#     return render_template('crop.html')
+@ app.route('/crop-recommend')
+def crop_recommend():
+    return render_template('crop.html')
 
 
 @ app.route('/fertilizer-recommend')
@@ -296,42 +276,42 @@ def fertilizer_recommend():
     
 
 
-# @ app.route('/crop-predict', methods=['POST','GET'])
-# def cropPrediction():
+@ app.route('/crop-predict', methods=['POST','GET'])
+def cropPrediction():
     
-#     if request.method == 'POST':
-#         N = float(request.form['nitrogen'])
-#         P = float(request.form['phosphorous'])
-#         K = float(request.form['potassium'])
-#         ph = float(request.form['pH'])
-#         rainfall=float(request.form['rainfall'])
-#         temperature=float(request.form['temperature'])
-#         humidity=float(request.form['humidity'])
-#         data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
-#         algo=request.form['algo']
+    if request.method == 'POST':
+        N = float(request.form['nitrogen'])
+        P = float(request.form['phosphorous'])
+        K = float(request.form['potassium'])
+        ph = float(request.form['pH'])
+        rainfall=float(request.form['rainfall'])
+        temperature=float(request.form['temperature'])
+        humidity=float(request.form['humidity'])
+        data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
+        algo=request.form['algo']
 
-#         if(algo=="RF"):
-#             crop_recommendation_model=rf_model
-#         elif(algo=="DT"):
-#             crop_recommendation_model=dt_model
-#         elif(algo=="LR"):
-#             crop_recommendation_model=lr_model
-#         elif(algo=="NB"):
-#             crop_recommendation_model=nb_model
-#         elif(algo=="SVM"):
-#             crop_recommendation_model=svm_model
-#         else:
-#             crop_recommendation_model=xg_model                 
+        if(algo=="RF"):
+            crop_recommendation_model=rf_model
+        elif(algo=="DT"):
+            crop_recommendation_model=dt_model
+        elif(algo=="LR"):
+            crop_recommendation_model=lr_model
+        elif(algo=="NB"):
+            crop_recommendation_model=nb_model
+        elif(algo=="SVM"):
+            crop_recommendation_model=svm_model
+        else:
+            crop_recommendation_model=xg_model                 
 
-#         my_prediction = crop_recommendation_model.predict(data)
-#         final_prediction = my_prediction[0]
+        my_prediction = crop_recommendation_model.predict(data)
+        final_prediction = my_prediction[0]
 
-#         if(crop_recommendation_model==xg_model):
-#             x=crops[final_prediction]
-#         else:
-#             x=final_prediction    
+        if(crop_recommendation_model==xg_model):
+            x=crops[final_prediction]
+        else:
+            x=final_prediction    
 
-#     return render_template('crop.html',message="Recommended Crop is "+x)
+    return render_template('crop.html',message="Recommended Crop is "+x)
 
 
 
@@ -377,9 +357,6 @@ def fertilizer_recommend():
        
 
 #     return render_template('fertilizer.html',message=response)
-
-
-
 
 
  

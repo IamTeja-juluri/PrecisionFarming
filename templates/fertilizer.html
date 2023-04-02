@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width", initial-scale="1.0">
+	<title>Fertilizer Recommendation</title>
+	<link rel="stylesheet" href="{{url_for('static',filename='css/styles.css')}}">
+	<script src="https://kit.fontawesome.com/6a4dfecb4a.js" crossorigin="anonymous"></script>
+</head>
+	<body>
+		
+		<div class="container">
+
+		
+			<div class="form-box">
+				<h1 id="title">Fertilizer Prediction</h1>
+
+				
+				<br>
+                <form action="/fertilizer-predict" method="post">
+
+                    <div class="input-group">
+
+                    <!-- <p>Nitrogen</p>
+                	<div class="input-field" id="nameField">
+                		<input type="text" placeholder="Enter Value" name="nitrogen" required>
+                	</div>
+                  
+                    <p>Phosphorous</p>
+                	<div class="input-field">
+                		<input type="text" placeholder="Enter Value" name="phosphorous" required>
+                	</div>
+                   
+                    <p>Potassium</p>
+                    <div class="input-field">
+                		<input type="text" placeholder="Enter Value" name="potassium" required>
+                	</div> -->
+
+
+                   
+                    <p>Crop</p>
+					
+					  <select id="crops" name="crops">
+						<option value="crop" class="option-field">Choose Crop</option>
+						<option value="rice" class="option-field">Rice</option>
+						<option value="maize" class="option-field">Maize</option>
+						<option value="chickpea" class="option-field">ChickPea</option>
+						<option value="kidneybeans" class="option-field">KidneyBeans</option>
+						<option value="pigeonpeas" class="option-field">PigeonPeas</option>
+						<option value="mothbeans" class="option-field">Mothbeans</option>
+						<option value="mungbean" class="option-field">Mungbean</option>
+						<option value="blackgram" class="option-field">Blackgram</option>
+						<option value="lentil" class="option-field">Lentil</option>
+						<option value="pomegranate" class="option-field">Pomegranate</option>
+						<option value="banana" class="option-field">Banana</option>
+						<option value="mango" class="option-field">Mango</option>
+						<option value="grapes" class="option-field">Grapes</option>
+						<option value="watermelon" class="option-field">Watermelon</option>
+						<option value="muskmelon" class="option-field">Muskmelon</option>
+						<option value="apple" class="option-field">Apple</option>
+						<option value="orange" class="option-field">Orange</option>
+						<option value="papaya" class="option-field">Papaya</option>
+						<option value="coconut" class="option-field">Coconut</option>
+						<option value="cotton" class="option-field">Cotton</option>
+						<option value="jute" class="option-field">Jute</option>
+						<option value="coffee" class="option-field">Coffee</option>
+					  </select>
+
+					  <br>
+					  <br>
+
+
+					<p>Send Updates Via</p>  
+					  <select id="notification_medium" name="notification_medium">
+						<option value="Medium" class="option-field">Choose Medium</option>
+						<option value="Sms" class="option-field">Sms</option>
+						<option value="Whatsapp" class="option-field">Whatsapp</option>
+					  </select>
+
+                      <br>
+					  <br>
+
+					<p>Mobile Number</p>
+					  <div class="input-field">
+						  <input type="text" placeholder="Enter Value" name="contact" required>
+					  </div>
+					  
+					  <br>    
+
+					  
+					<p>Update About Crop Norm</p>  
+					  <select id="crop_status" name="crop_status">
+						<option value="Time" class="option-field">Choose Time</option>
+						<option value="120" class="option-field">Every 2 mins</option>
+						<option value="300" class="option-field">Every 5 mins</option>
+						<option value="600" class="option-field">Every 10 mins</option>
+						<option value="900" class="option-field">Every 15 mins</option>
+						<option value="1200" class="option-field">Every 20 mins</option>
+						<option value="1500" class="option-field">Every 25 mins</option>
+						<option value="1800" class="option-field">Every 30 mins</option>
+						<option value="2100" class="option-field">Every 35 mins</option>
+						<option value="2400" class="option-field">Every 40 mins</option>
+						<option value="2700" class="option-field">Every 45 mins</option>
+						<option value="3000" class="option-field">Every 50 mins</option>
+						<option value="3300" class="option-field">Every 55 mins</option>
+						<option value="3600" class="option-field">Every 1 Hour</option>						
+					  </select>
+
+                      <br>
+					  <br>  
+
+                    </div>
+
+                    <div class="btn-field">
+                    	<button type="submit" id="submitBtn" >Submit</button>
+						<button type="submit" id="submitBtn" onclick="window.location.href='http://localhost:5000/crop-recommend';">Try For Crop</button>
+
+                    </div>
+
+					<br>
+
+					<h2>{{message}}</h2>
+
+                </form>
+			</div>
+			
+		</div>
+
+
+<script>
+
+	
+
+    
+</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width", initial-scale="1.0">
+	<title>Crop Recommendation</title>
+	<link rel="stylesheet" href="{{url_for('static',filename='css/styles.css')}}">
+	<!-- <script src="https://kit.fontawesome.com/6a4dfecb4a.js" crossorigin="anonymous"></script> -->
+</head>
+	<body>
+		
+		<div class="container">
+           
+			
+
+			<div class="form-box">
+				<h1 id="title">Crop Prediction</h1>
+				
+				<h2><i>{{message}}</i></h2>
+				<br>
+                <form action="/crop-predict" method="post">
+
+                    <div class="input-group">
+
+                    <p>Nitrogen</p>
+                	<div class="input-field" id="nameField">
+                		<input type="text" placeholder="Enter Value" name="nitrogen" required>
+                	</div>
+                  
+                    <p>Phosphorous</p>
+                	<div class="input-field">
+                		<input type="text" placeholder="Enter Value" name="phosphorous" required>
+                	</div>
+                   
+                    <p>Potassium</p>
+                    <div class="input-field">
+                		<input type="text" placeholder="Enter Value" name="potassium" required>
+                	</div>
+
+					<p>Temperature</p>
+                	<div class="input-field">
+                		<input type="text" placeholder="Enter Value" name="temperature" required>
+                	</div>
+
+					
+                	<p>Humidity</p>
+                	<div class="input-field">
+                		<input type="text" placeholder="Enter Value" name="humidity" required>
+                	</div> 
+
+                   
+                   <p>pH</p>
+                	<div class="input-field">
+                		<input type="text" placeholder="Enter Value" name="pH" required>
+                	</div>
+                	
+                    <p>Rainfall</p>
+                	<div class="input-field">	
+                		<input type="text" placeholder="Enter Value" name="rainfall" required>
+                	</div>
+
+					<p>Algorithm</p>
+					
+					  <select id="algo" name="algo">
+						<option value="Algorithm" class="option-field">Select Algorithm</option>
+						<option value="RF" class="option-field">Random Forest</option>
+						<option value="DT" class="option-field">Decision Tree</option>
+						<option value="LR" class="option-field">Logistic Regression</option>
+						<option value="NB" class="option-field">Naive Bayes</option>
+						<option value="SVM" class="option-field">Support Vector Machine</option>
+						<option value="XG" class="option-field">XGBoost</option>
+					  </select>
+					
+					  <br>
+                    <h3>Note : XGBoost Has The Highest Accuracy</h3>
+   
+					<br>
+					<div class="btn-field">
+                    	<button type="submit" id="submitBtn" >Predict</button>
+                        <button type="submit" id="submitBtn" onclick="window.location.href='http://localhost:5000/fertilizer-recommend';">Try For Fertilizer</button>
+                    </div>
+					
+
+                    </div>
+                   
+                    
+
+                </form>
+
+ 
+			</div>
+			
+		</div>
+
+
+<script>
+
+	
+
+    
+</script>
+
+	</body>
+
+</html>

@@ -14,6 +14,8 @@ import time
 import csv
 from twilio.rest import Client
 import os
+import datetime
+
 
 
 # Create a new instance of the Chrome browser
@@ -47,9 +49,18 @@ driver.execute("send_command", params)
 username="cvr-heights-2022"
 password="Cvrece123"
 url="https://beta.thethingsmate.com/oauth/login"
-filename="Soil_NPK_sensor_-1_2023_04_02.csv"
 
+year=datetime.date.today().year
+month=datetime.date.today().month
+day=datetime.date.today().day
 
+if(month<10):
+    month='0'+str(month)
+
+if(day<10):
+    day='0'+str(day)
+
+filename="Soil_NPK_sensor_-1_"+str(year)+'_'+month+'_'+day+'.csv'
 # Loading crop recommendation model
 
 xg_model_path = 'models/XGBoost.pkl'

@@ -196,7 +196,6 @@ def repeatTask(crop_name,contact,medium):
         if(i.find("Soil")!=-1):
              os.remove(i)  
 
-
     #3dots
     driver.find_element(By.XPATH,"//*[@id='dashboard-container']/div/div/div[3]/div/div/div[1]/div[1]/a").click()
     time.sleep(3)
@@ -209,8 +208,6 @@ def repeatTask(crop_name,contact,medium):
 
     key=processCsvFile(crop_name)
     sendMsg(fertilizer_dic_msg[key],contact,medium)
-
-
 
 
 def job(crop_name,contact,time_interval,medium):
@@ -304,8 +301,6 @@ def cropPrediction():
             x=final_prediction    
 
     return render_template('crop.html',message="Recommended Crop is "+x)
-
-
 
 
 @ app.route('/fertilizer-predict', methods=['POST'])

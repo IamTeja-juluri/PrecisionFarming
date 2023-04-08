@@ -102,12 +102,11 @@ time_interval=''
 
 def sendMsg(Message,contact):
 
-      contactno='+91'+contact
-      print("sending msg")
-      account_sid = "AC927097c6ffc585d6ffa4322bd090b52a" 
-      auth_token = "ed33d3b9b6c355564ba88a6ac974826c"
+      print(Message)
+      account_sid = "AC843be320f9a1c6ecde0e97ca35f3821f" 
+      auth_token = "7fead4cb79f037f74bc02e21797269dd"
       client = Client(account_sid,auth_token)
-      message=client.messages.create(body=Message,from_='+15673131213',to=contactno)
+      message=client.messages.create(body=Message,from_='+15074739185',to='+91'+contact)
      
   		
 
@@ -184,10 +183,10 @@ def processCsvFile(crop_name):
     return fertilizer_prediction_result(rows,crop_name)
    
 
-def repeatTask():
+def repeatTask(crop_name,contact):
 
     #refresh button
-    driver.find_element(By.XPATH,"//*[@id='application-root']/div[2]/div/div/div[1]/div[2]/span/div/button[1]").click()
+    driver.find_element(By.XPATH,"//span[contains(text(),'Refresh')]").click()
     time.sleep(5)
 
     li = os.listdir('./') 
@@ -207,8 +206,13 @@ def repeatTask():
 
     print("repeat task method")
 
+    key=processCsvFile(crop_name)
+    sendMsg(fertilizer_dic_msg[key],contact)
 
-def job():
+
+
+
+def job(crop_name,contact,time_interval):
 
     # driver.maximize_window()
 
@@ -216,27 +220,27 @@ def job():
     driver.get(url)
 
     #Sending Keys
-    driver.find_element(By.XPATH,"//input[@id='user_id']").send_keys(username)
-    driver.find_element(By.XPATH,"//input[@id='password']").send_keys(password) 
+    driver.find_element(By.XPATH,"//input[contains(@id,'user_id')]").send_keys(username)
+    driver.find_element(By.XPATH,"//input[contains(@id,'password')]").send_keys(password) 
     time.sleep(5)
 
 
     #clicks login
-    driver.find_element(By.XPATH,"//button[@class='_1h5on2Eq5J E2kP6n1yfv']").click()
+    driver.find_element(By.XPATH,"//span[contains(text(),'Login')]").click()
     time.sleep(5)
 
     
     #clicks console
-    driver.find_element(By.XPATH,"//span[@class='wTOG3ofQ0S']").click()
+    driver.find_element(By.XPATH,"//a[contains(@class,'_8TIz4+gU66 _1h5on2Eq5J')]").click()
     time.sleep(5)
 
     
     #clicks Application Server
-    driver.find_element(By.XPATH,"//div[@class='rlCIwsujpJ']").click()
+    driver.find_element(By.XPATH,"//span[contains(text(),'Application Server')]").click()
     time.sleep(5)
 
     #clicks cvr-smart-agriculture
-    driver.find_element(By.XPATH,"//*[@id='application-root']/div[2]/div/div/div/div/div/div/div[2]/div[1]/div/div/div/div/div/table/tbody/tr[8]/td[1]/a").click()
+    driver.find_element(By.XPATH,"//a[contains(text(),'CVR Smart Agriculture')]").click()
     time.sleep(5)
 
     #reload page
@@ -244,7 +248,11 @@ def job():
     time.sleep(5)
 
     print("job method")
-    repeatTask()
+    repeatTask(crop_name,contact)
+    schedule.every(int(time_interval)).seconds.do(repeatTask,crop_name=crop_name,contact=contact)
+
+    while True:
+        schedule.run_pending()
     
     driver.quit() 
 
@@ -313,10 +321,10 @@ def fertilizerPrediction():
         print("n_m="+notification_medium)
         print("contact="+contact)
         print("time="+time_interval)
-        job()    
-        key=processCsvFile(crop_name)
-        sendMsg(fertilizer_dic_msg[key],contact)   
-        response = Markup(str(fertilizer_dic_ui[key]))  
+        job(crop_name,contact,time_interval)    
+        # key=processCsvFile(crop_name)
+        # sendMsg(fertilizer_dic_msg[key],contact)   
+        response = Markup(str(fertilizer_dic_ui['KLow']))  
 
     return render_template('fertilizer.html',message=response)
 
@@ -350,49 +358,3 @@ if __name__ == '__main__':
 
 
 
-
- 
-
-# @ app.route('/fertilizer-predict', methods=['POST'])
-# def fertilizerPrediction():
-
-#     if request.method == 'POST':
-#         N = float(request.form['nitrogen'])
-#         P = float(request.form['phosphorous'])
-#         K = float(request.form['potassium'])
-#         crop=request.form['crops']
-
-#         df = pd.read_csv('Data/fertilizer.csv')
-#         nval = df[df['Crop'] == crop]['N'].iloc[0]
-#         pval= df[df['Crop'] == crop]['P'].iloc[0]
-#         kval= df[df['Crop'] == crop]['K'].iloc[0]
-
-#         n = nval - N
-#         p = pval - P
-#         k = kval - K
-
-#         temp = {abs(n): "N", abs(p): "P", abs(k): "K"}
-#         max_value = temp[max(temp.keys())]
-#         if max_value == "N":
-#             if n<0:
-#                 key="NHigh"
-#             else:
-#                 key="NLow"
-#         elif max_value=="P":
-#             if p<0:
-#                 key="PHigh"
-#             else:
-#                 key="PLow"
-#         else:
-#             if k<0:
-#                 key="KHigh" 
-#             else:
-#                 key="KLow"
-
-#         response = Markup(str(fertilizer_dic[key]))                               
-        
-       
-
-#     return render_template('fertilizer.html',message=response)
-
-   

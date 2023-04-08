@@ -61,7 +61,6 @@ if(day<10):
     day='0'+str(day)
 
 filename="Soil_NPK_sensor_-1_"+str(year)+'_'+month+'_'+day+'.csv'
-# Loading crop recommendation model
 
 xg_model_path = 'models/XGBoost.pkl'
 xg_model = pickle.load(
@@ -97,18 +96,20 @@ app = Flask(__name__)
 
 crops=["apple","banana","blackgram","chickpea","coconut","coffee","cotton","grapes","jute","kidneybeans","lentil","maize","mango","mothbeans","mungbean","muskmelon","orange","papaya","pigeonpeas","pomegranate","rice","watermelon"]
 
-notification_medium=''
-time_interval=''
 
-def sendMsg(Message,contact):
+def sendMsg(Message,contact,medium):
+      
+       account_sid ='AC843be320f9a1c6ecde0e97ca35f3821f'
+       auth_token = '71ae86894ccf5781bed87c5a0b2da4c6'
+       client = Client(account_sid,auth_token)
+       print(Message) 
+      
+       if(medium=='Sms'):
+          message=client.messages.create(body=Message,from_='+15074739185',to='+91'+contact) 
+       else:
+          message=client.messages.create(body=Message,from_='whatsapp:+14155238886',to='whatsapp:+91'+contact) 
 
-      print(Message)
-      account_sid = "AC843be320f9a1c6ecde0e97ca35f3821f" 
-      auth_token = "7fead4cb79f037f74bc02e21797269dd"
-      client = Client(account_sid,auth_token)
-      message=client.messages.create(body=Message,from_='+15074739185',to='+91'+contact)
-     
-  		
+                    
 
 def fertilizer_prediction_result(rows,crop_name):
         
@@ -183,7 +184,7 @@ def processCsvFile(crop_name):
     return fertilizer_prediction_result(rows,crop_name)
    
 
-def repeatTask(crop_name,contact):
+def repeatTask(crop_name,contact,medium):
 
     #refresh button
     driver.find_element(By.XPATH,"//span[contains(text(),'Refresh')]").click()
@@ -207,12 +208,12 @@ def repeatTask(crop_name,contact):
     print("repeat task method")
 
     key=processCsvFile(crop_name)
-    sendMsg(fertilizer_dic_msg[key],contact)
+    sendMsg(fertilizer_dic_msg[key],contact,medium)
 
 
 
 
-def job(crop_name,contact,time_interval):
+def job(crop_name,contact,time_interval,medium):
 
     # driver.maximize_window()
 
@@ -248,8 +249,8 @@ def job(crop_name,contact,time_interval):
     time.sleep(5)
 
     print("job method")
-    repeatTask(crop_name,contact)
-    schedule.every(int(time_interval)).seconds.do(repeatTask,crop_name=crop_name,contact=contact)
+    repeatTask(crop_name,contact,medium)
+    schedule.every(int(time_interval)).seconds.do(repeatTask,crop_name=crop_name,contact=contact,medium=medium)
 
     while True:
         schedule.run_pending()
@@ -262,7 +263,7 @@ def crop_recommend():
     return render_template('crop.html')
 
 
-@ app.route('/fertilizer-recommend')
+@ app.route('/')
 def fertilizer_recommend():
     return render_template('fertilizer.html')
     
@@ -321,9 +322,7 @@ def fertilizerPrediction():
         print("n_m="+notification_medium)
         print("contact="+contact)
         print("time="+time_interval)
-        job(crop_name,contact,time_interval)    
-        # key=processCsvFile(crop_name)
-        # sendMsg(fertilizer_dic_msg[key],contact)   
+        job(crop_name,contact,time_interval,notification_medium)      
         response = Markup(str(fertilizer_dic_ui['KLow']))  
 
     return render_template('fertilizer.html',message=response)

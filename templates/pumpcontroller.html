@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width", initial-scale="1.0">
+	<title>Smart Irrigation</title>
+	<link rel="stylesheet" href="{{url_for('static',filename='css/styles.css')}}">
+	<script src="https://kit.fontawesome.com/6a4dfecb4a.js" crossorigin="anonymous"></script>
+</head>
+	<body>
+		
+		<div class="container">
+
+		
+			<div class="form-box">
+				<h1 id="title">Pump Controller</h1>
+				
+				<br>
+                <form action="/trigger_pump_controller" method="post">
+
+                    <div class="input-group">
+                   
+                    <p>Area in Acres</p>
+					  <div class="input-field">
+						  <input type="text" placeholder="Enter Value" name="area" required>
+					  </div>
+					  
+					<br>    
+
+                    <p>Flow Rate in Litres per minute</p>
+					  <div class="input-field">
+						  <input type="text" placeholder="Enter Value" name="flowrate" required>
+					  </div>
+					  
+					<br>    
+                   
+			
+					<p>Send Update Via</p>  
+					  <select id="notification_medium" name="notification_medium">
+						<option value="Medium" class="option-field">Choose Medium</option>
+						<option value="Sms" class="option-field">Sms</option>
+						<option value="Whatsapp" class="option-field">Whatsapp</option>
+					  </select>
+
+                      <br>
+					  <br>
+
+					<p>Mobile Number</p>
+					  <div class="input-field">
+						  <input type="text" placeholder="Enter Value" name="contact" required>
+					  </div>
+					  
+					  <br>
+					  
+					<p>Trigger Pump Controller</p>  
+					<select id="pump_controller_action" name="pump_controller_action">
+					   <option value="Yes" class="option-field">Choose</option>
+                       <option value="Yes" class="option-field">Yes</option>
+					   <option value="No" class="option-field">No</option>
+					</select>
+
+					<br>
+
+					<br>
+					  
+                    </div>
+
+                    <div class="btn-field">
+                    	<button type="submit" id="submitBtn" >Submit</button>
+						<button type="submit" id="submitBtn" onclick="window.location.href='http://localhost:5000/';">Try For Fertilizer</button>
+
+                    </div>
+
+					<br>
+
+					<h2>{{message}}</h2>
+
+                </form>
+			</div>
+			
+		</div>
+
+
+<script>
+
+	
+
+    
+</script>
+
+	</body>
+
+</html>

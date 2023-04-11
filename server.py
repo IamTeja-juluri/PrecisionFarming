@@ -22,7 +22,7 @@ import datetime
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-# options.add_experimental_option("prefs",{"download.default_directory":"C:\\Users\\Teja\\OneDrive\\Desktop\\Selenium Automation\\"})
+# options.add_experimental_option("prefs",{"download.default_directory":"C:\\Users\\Teja\\OneDrive\\Desktop\\Web Development\\Python Projects\\Farming"})
 
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
 
@@ -60,7 +60,7 @@ if(month<10):
 if(day<10):
     day='0'+str(day)
 
-filename="Soil_NPK_sensor_-1_"+str(year)+'_'+month+'_'+day+'.csv'
+filename="Soil_NPK_sensor_-1_"+str(year)+'_'+str(month)+'_'+str(day)+'.csv'
 
 xg_model_path = 'models/XGBoost.pkl'
 xg_model = pickle.load(
@@ -116,9 +116,7 @@ def fertilizer_prediction_result(rows,crop_name):
         N=int(rows[0][1])
         P=int(rows[0][2])
         K=int(rows[0][3])
-
         crop=str(crop_name)
-
         df=pd.read_csv('Data/fertilizer.csv')
         
         nval=df[df['Crop']==crop]['N'].iloc[0]
@@ -209,10 +207,9 @@ def repeatTask(crop_name,contact,medium):
     key=processCsvFile(crop_name)
     sendMsg(fertilizer_dic_msg[key],contact,medium)
 
+def automate_TTN():
 
-def job(crop_name,contact,time_interval,medium):
-
-    # driver.maximize_window()
+    driver.maximize_window()
 
     # Navigate to the URL of the website
     driver.get(url)
@@ -237,6 +234,11 @@ def job(crop_name,contact,time_interval,medium):
     driver.find_element(By.XPATH,"//span[contains(text(),'Application Server')]").click()
     time.sleep(5)
 
+
+def job(crop_name,contact,time_interval,medium):
+
+    automate_TTN()
+
     #clicks cvr-smart-agriculture
     driver.find_element(By.XPATH,"//a[contains(text(),'CVR Smart Agriculture')]").click()
     time.sleep(5)
@@ -255,6 +257,117 @@ def job(crop_name,contact,time_interval,medium):
     driver.quit() 
 
 
+def fetch_file_from_TTN():
+
+    automate_TTN()
+
+    #clicks cvr-smart-agriculture
+    driver.find_element(By.XPATH,"//a[contains(text(),'CVR Smart Agriculture')]").click()
+    time.sleep(5)
+
+    #reload page
+    driver.get("https://beta.thethingsmate.com/console/app/dashboards/576-cvr-smart-agriculture")
+    time.sleep(5)
+
+    #refresh button
+    driver.find_element(By.XPATH,"//span[contains(text(),'Refresh')]").click()
+    time.sleep(5)
+
+    li = os.listdir('./') 
+
+    for i in li:
+        if(i.find("EC")!=-1):
+             os.remove(i)  
+
+    #3dots
+    driver.find_element(By.XPATH,"//*[@id='dashboard-container']/div/div/div[1]/div/div/div[1]/div[1]/a").click()
+    time.sleep(3)
+
+    #download ec and water moisture Table
+    driver.find_element(By.XPATH,"/html/body/div/div/div/ul/li[1]/a").click()
+    time.sleep(8)
+
+    # driver.quit()
+
+
+
+def predict_time(area_in,flowrate):
+ 
+   file_name="EC_SENSOR_2_"+str(year)+'_'+str(month)+'_'+str(day)+'.csv'
+   with open("C:\\Users\\Teja\\OneDrive\\Desktop\\Web Development\\Python Projects\\Farming\\"+file_name, 'r') as file:
+    csvreader = csv.reader(file)
+
+    next(csvreader)
+   
+    for row in csvreader:
+        current_moisture = float(row[1])
+        print(f"Current Moisture content in the soil: {current_moisture}")
+        desired_range1 = 20
+        desired_range2 = 28
+        flowRate = flowrate
+        areaInAcres = area_in
+        area = areaInAcres * 4047
+        depth = 5.00
+
+        if desired_range1 < current_moisture < desired_range2:
+            print("Field is in ideal condition ")
+            break
+        elif current_moisture < desired_range1:
+            vol_field = area * depth
+            water_content_req = ((desired_range1 - current_moisture) / 100) * vol_field
+            water_content_req = float(water_content_req)
+            x = water_content_req / flowRate
+            time = round(x) + 2
+            time = str(time)
+            print("Run the motor for " + time + " minutes")
+            break
+        else:
+            print("Turn off the motor, you have watered enough")
+            break
+
+    return time         
+    
+
+def promptPumpController():
+
+    driver.find_element(By.XPATH,"//span[contains(text(),'Dashboards')]").click()
+    time.sleep(5)
+   
+    #clicks pump controller
+    driver.find_element(By.XPATH,"//a[contains(text(),'Pump controller')]").click()
+    time.sleep(5)
+
+    #reload page
+    driver.get("https://beta.thethingsmate.com/console/app/dashboards/680-pump-controller")
+    time.sleep(5)
+
+    #refresh page
+    driver.find_element(By.XPATH,"//span[contains(text(),'Refresh')]").click()
+    time.sleep(5)
+
+
+def turnOnPump(contact,medium):
+
+    promptPumpController()
+    driver.find_element(By.XPATH,"//span[contains(text(),'Turn ON')]").click()
+    time.sleep(5)
+    driver.find_element(By.XPATH,"//span[contains(text(),'Yes')]").click()
+    sendMsg("Pump Controller is Turned ON",contact,medium)
+    print("Pump Turned ON")
+    time.sleep(5)
+
+
+def turnOffPump(contact,medium):
+
+    driver.find_element(By.XPATH,"//span[contains(text(),'Turn OFF')]").click()
+    time.sleep(5)
+    driver.find_element(By.XPATH,"(//span[contains(text(),'Yes')])[2]").click()
+    time.sleep(5)
+    sendMsg("Pump Controller is Turned OFF",contact,medium)
+    driver.quit()
+    print("Pump Turned Off")
+
+
 @ app.route('/crop-recommend')
 def crop_recommend():
     return render_template('crop.html')
@@ -263,6 +376,10 @@ def crop_recommend():
 @ app.route('/')
 def fertilizer_recommend():
     return render_template('fertilizer.html')
+
+@app.route('/pumpcontroller')
+def pump_controller():
+    return render_template('pumpcontroller.html')
     
 
 @ app.route('/crop-predict', methods=['POST','GET'])
@@ -312,15 +429,29 @@ def fertilizerPrediction():
         notification_medium=request.form['notification_medium']
         contact=request.form['contact']
         time_interval=request.form['crop_status']
-
-        print("crop=",type(crop_name))
-        print("n_m="+notification_medium)
-        print("contact="+contact)
-        print("time="+time_interval)
         job(crop_name,contact,time_interval,notification_medium)      
         response = Markup(str(fertilizer_dic_ui['KLow']))  
 
     return render_template('fertilizer.html',message=response)
+
+
+@ app.route('/trigger_pump_controller',methods=['POST'])
+def pumpcontroller():
+
+    if request.method == 'POST':
+        area=float(request.form['area'])
+        flowrate=float(request.form['flowrate'])
+        medium=request.form['notification_medium']
+        contact=request.form['contact']
+        option=request.form['pump_controller_action']
+        fetch_file_from_TTN()
+        calculated_time=predict_time(area,flowrate)
+        if(option=='Yes'):
+            turnOnPump(contact,medium)
+            # time.sleep(int(calculated_time))
+            time.sleep(10)
+            turnOffPump(contact,medium)
+    return render_template('pumpcontroller.html',message="Pump controller turned is on for "+calculated_time+"minutes")    
 
  
 if __name__ == '__main__':

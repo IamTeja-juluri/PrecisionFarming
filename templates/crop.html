@@ -6,10 +6,17 @@
 	<link rel="stylesheet" href="{{url_for('static',filename='css/styles.css')}}">
 </head>
 	<body>
+
 		
 		<div class="container">
-           
-			
+
+			<br>
+
+			<div class="nav-bar">
+				<button type="submit" id="submitBtn" style="font-size: 20px;" onclick="onClickFertilizer()">Fertilizer Recommendation</button>
+				<button type="submit" id="submitBtn" style="font-size: 20px;" onclick="onClickPump()">Pump Controller</button> 
+				<button type="submit" id="submitBtn" style="font-size: 20px;" onclick="onClickCrop()">Crop Recommendation</button> 
+			</div>
 
 			<div class="form-box">
 				<h1 id="title">Crop Prediction</h1>
@@ -75,7 +82,7 @@
 					<br>
 					<div class="btn-field">
                     	<button type="submit" id="submitBtn" >Predict</button>
-                        <button type="submit" id="submitBtn" onclick="window.location.href='http://localhost:5000';">Try For Fertilizer</button>
+                        <button type="submit" id="submitBtn" onclick="onClickCrop()">Try Again</button>
                     </div>
 					
 
@@ -91,12 +98,24 @@
 		</div>
 
 
-<script>
+		<script>
 
-	
-
-    
-</script>
+			function onClickFertilizer(){
+				window.location.href='http://localhost:5000'
+			}
+		
+			
+			function onClickCrop(){
+				window.location.href='http://localhost:5000/crop-recommend'
+			}
+		
+			
+			function onClickPump(){
+				window.location.href='http://localhost:5000/pumpcontroller'
+			}
+		
+			
+		</script>
 
 	</body>
 

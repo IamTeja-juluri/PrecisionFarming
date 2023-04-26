@@ -100,7 +100,7 @@ crops=["apple","banana","blackgram","chickpea","coconut","coffee","cotton","grap
 def sendMsg(Message,contact,medium):
       
        account_sid ='AC843be320f9a1c6ecde0e97ca35f3821f'
-       auth_token = '71ae86894ccf5781bed87c5a0b2da4c6'
+       auth_token = '947c89efa665c62e07389284b2f460ad'
        client = Client(account_sid,auth_token)
        print(Message) 
       
@@ -127,7 +127,7 @@ def fertilizer_prediction_result(rows,crop_name):
         p=pval-P
         k=kval-K
 
-        temp={abs(n):"N",abs(p):"P",abs(k):"K"}
+        temp={abs(n):"N",abs(p):"P",abs(k):"K"} 
         max_value=temp[max(temp.keys())]
         if max_value == "N":
             if n<0:
@@ -170,10 +170,15 @@ def processCsvFile(crop_name):
      # printing the field names
     print('Field names are:' + ', '.join(field for field in fields))
 
+    x=len(rows)
 
-    n=rows[0][1]
-    p=rows[0][2]
-    k=rows[0][3]
+    n=rows[x-3][1]
+    p=rows[x-3][2]
+    k=rows[x-3][3]
+
+    # n=rows[0][1]
+    # p=rows[0][2]
+    # k=rows[0][3]
 
     print(n,p,k)
 
@@ -249,10 +254,10 @@ def job(crop_name,contact,time_interval,medium):
 
     print("job method")
     repeatTask(crop_name,contact,medium)
-    schedule.every(int(time_interval)).seconds.do(repeatTask,crop_name=crop_name,contact=contact,medium=medium)
+    # schedule.every(int(time_interval)).seconds.do(repeatTask,crop_name=crop_name,contact=contact,medium=medium)
 
-    while True:
-        schedule.run_pending()
+    # while True:
+    #     schedule.run_pending()
     
     driver.quit() 
 
@@ -293,39 +298,51 @@ def fetch_file_from_TTN():
 
 def predict_time(area_in,flowrate):
  
-   file_name="EC_SENSOR_2_"+str(year)+'_'+str(month)+'_'+str(day)+'.csv'
-   with open("C:\\Users\\Teja\\OneDrive\\Desktop\\Web Development\\Python Projects\\Farming\\"+file_name, 'r') as file:
-    csvreader = csv.reader(file)
+    filename="EC_SENSOR_2_"+str(year)+'_'+str(month)+'_'+str(day)+'.csv'
 
-    next(csvreader)
-   
-    for row in csvreader:
-        current_moisture = float(row[1])
-        print(f"Current Moisture content in the soil: {current_moisture}")
-        desired_range1 = 20
-        desired_range2 = 28
-        flowRate = flowrate
-        areaInAcres = area_in
-        area = areaInAcres * 4047
-        depth = 5.00
+    # initializing the titles and rows list
+    fields = []
+    rows = []
 
-        if desired_range1 < current_moisture < desired_range2:
-            print("Field is in ideal condition ")
-            break
-        elif current_moisture < desired_range1:
-            vol_field = area * depth
-            water_content_req = ((desired_range1 - current_moisture) / 100) * vol_field
-            water_content_req = float(water_content_req)
-            x = water_content_req / flowRate
-            time = round(x) + 2
-            time = str(time)
-            print("Run the motor for " + time + " minutes")
-            break
-        else:
-            print("Turn off the motor, you have watered enough")
-            break
+    
+    # reading csv file
+    with open(filename, 'r') as csvfile:
+        # creating a csv reader object
+        csvreader = csv.reader(csvfile)
+        # extracting field names through first row
+        fields = next(csvreader)
+        # extracting each data row one by one
+        for row in csvreader:
+            rows.append(row)
 
-    return time         
+     # printing the field names
+    print('Field names are:' + ', '.join(field for field in fields))
+
+    x=len(rows)
+    current_moisture = float(rows[2][1])
+    print(f"Current Moisture content in the soil: {current_moisture}")
+    desired_range1 = 20
+    desired_range2 = 28
+    flowRate = flowrate
+    areaInAcres = area_in
+    area = areaInAcres * 4047
+    depth = 1.5
+
+    if desired_range1 < current_moisture < desired_range2:
+        print("Field is in ideal condition ")
+    elif current_moisture < desired_range1:
+        vol_field = area * depth
+        water_content_req = ((desired_range1 - current_moisture) / 100) * vol_field
+        water_content_req = float(water_content_req)
+        x = water_content_req / flowRate
+        time = round(x) + 2
+        time = str(time)
+        print("Run the motor for " + time + " minutes")
+    else:
+        print("Turn off the motor, you have watered enough")
+        
+    return time        
+        
     
 
 def promptPumpController():
@@ -451,7 +468,7 @@ def pumpcontroller():
             # time.sleep(int(calculated_time))
             time.sleep(10)
             turnOffPump(contact,medium)
-    return render_template('pumpcontroller.html',message="Pump controller turned is on for "+calculated_time+"minutes")    
+    return render_template('pumpcontroller.html',message="Pump controller is turned on for "+calculated_time+" minutes")    
 
  
 if __name__ == '__main__':
